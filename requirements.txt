@@ -1,3 +1,5 @@
 -e .
 PyQt5==5.12.2
 black
+pytest==5.2.0
+pytest-cov==2.6.1

@@ -1,2 +1,7 @@
-env/*
+*egg*
 .idea/*
+
+env/*
+
+htmlcov/*
+.coverage
