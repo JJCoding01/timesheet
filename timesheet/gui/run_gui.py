@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtCore, QtGui, uic
 
 path = Path(__file__).parent
-UIFilename = Path(__file__).parent / "gui.ui"
+UIFilename = Path(__file__).parent / "mainWindow.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(UIFilename)
 
 

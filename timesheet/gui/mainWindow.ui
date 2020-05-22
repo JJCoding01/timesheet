@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
+    <width>647</width>
     <height>428</height>
    </rect>
   </property>
@@ -192,7 +192,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="labelNextWeekGoals">
+            <widget class="QLabel" name="labelThisWeekGoals">
              <property name="text">
               <string>Goals from last week</string>
              </property>
@@ -285,27 +285,16 @@
          </spacer>
         </item>
         <item>
-         <widget class="QDialogButtonBox" name="buttonBox">
-          <property name="maximumSize">
-           <size>
-            <width>160</width>
-            <height>16777215</height>
-           </size>
+         <widget class="QPushButton" name="OK">
+          <property name="text">
+           <string>Ok</string>
           </property>
-          <property name="cursor">
-           <cursorShape>ArrowCursor</cursorShape>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::TabFocus</enum>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="standardButtons">
-           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-          </property>
-          <property name="centerButtons">
-           <bool>false</bool>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="Cancel">
+          <property name="text">
+           <string>Cancel</string>
           </property>
          </widget>
         </item>
@@ -320,7 +309,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>612</width>
+     <width>647</width>
      <height>21</height>
     </rect>
    </property>
