@@ -1,7 +1,7 @@
-from sqlalchemy import UniqueConstraint
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import UniqueConstraint
+from sqlalchemy import Column, Integer, Date, String, Boolean, ForeignKey, Float
+from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import relationship, backref
 
 Base = declarative_base()
@@ -66,3 +66,78 @@ class Project(Base):
 
     def __repr__(self):
         return f"{__class__.__name__}({self.number}, '{self.description}')"
+
+
+class TimesheetMixin:
+
+    timesheet_id = Column("TimesheetID", Integer, primary_key=True)
+    ending_date = Column("EndingDate", Date, nullable=False)
+
+    def __init__(self, date, employee, project, days):
+        self.ending_date = date
+        self.employee = employee
+        self.project = project
+        self.days = days
+        (
+            self.day1,
+            self.day2,
+            self.day3,
+            self.day4,
+            self.day5,
+            self.day6,
+            self.day7,
+        ) = days
+
+    def __repr__(self):
+        return (
+            f"{__class__.__name__}("
+            f"date={self.ending_date}, "
+            f"employee={self.employee}, "
+            f"project={self.project}, "
+            f"days=({self.day1}, {self.day2}, ...) ...)"
+        )
+
+    @declared_attr
+    def __tablename__(self):
+        return f"{self.__name__}s"
+
+    @declared_attr
+    def employee_id(self):
+        return Column(
+            "EmployeeID", Integer, ForeignKey("Employees.EmployeeID"), nullable=False
+        )
+
+    @declared_attr
+    def employee(self):
+        return relationship(
+            "Employee", backref=backref(f"{self.__name__}"), uselist=False
+        )
+
+    @declared_attr
+    def project_id(self):
+        return Column(
+            "ProjectID", Integer, ForeignKey("Projects.ProjectID"), nullable=True
+        )
+
+    @declared_attr
+    def project(self):
+        return relationship('Project', backref=backref(f'{self.__name__}', uselist=False))
+
+    # add a column for each day of the week, keep these general, so the
+    # first/last day can be customized at the front end. These will store the
+    # hours related to the project
+    day1 = Column("Day1", Float)
+    day2 = Column("Day2", Float)
+    day3 = Column("Day3", Float)
+    day4 = Column("Day4", Float)
+    day5 = Column("Day5", Float)
+    day6 = Column("Day6", Float)
+    day7 = Column("Day7", Float)
+
+
+class TimesheetPending(TimesheetMixin, Base):
+    __tablename__ = "TimesheetsPending"
+
+
+class Timesheet(TimesheetMixin, Base):
+    pass
