@@ -58,6 +58,7 @@ class Project(Base):
     project_id = Column("ProjectID", Integer, primary_key=True)
     number = Column("Number", Integer, unique=True, nullable=False)
     description = Column("Description", String(50))
+    active = Column("Active", Boolean, default=True)
 
     def __init__(self, number, description):
         self.number = number
