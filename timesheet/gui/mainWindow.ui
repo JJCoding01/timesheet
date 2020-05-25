@@ -141,7 +141,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QDateEdit" name="date">
+              <widget class="QDateEdit" name="date_field">
                <property name="toolTip">
                 <string>Enter the Saturday date for end of week</string>
                </property>
@@ -319,7 +319,7 @@
  <tabstops>
   <tabstop>tabWidget</tabstop>
   <tabstop>fullname</tabstop>
-  <tabstop>date</tabstop>
+  <tabstop>date_field</tabstop>
   <tabstop>goals1</tabstop>
   <tabstop>goals2</tabstop>
   <tabstop>id</tabstop>
