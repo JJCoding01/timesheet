@@ -73,7 +73,7 @@ class TimesheetMixin:
     timesheet_id = Column("TimesheetID", Integer, primary_key=True)
     ending_date = Column("EndingDate", Date, nullable=False)
 
-    def __init__(self, date, employee, project, days):
+    def __init__(self, date, employee, project, goal1, goal2, days):
         self.ending_date = date
         self.employee = employee
         self.project = project
@@ -133,6 +133,10 @@ class TimesheetMixin:
     day5 = Column("Day5", Float)
     day6 = Column("Day6", Float)
     day7 = Column("Day7", Float)
+
+    # add goals
+    goals1 = Column('Goals1', String(300))
+    goals2 = Column('Goals2', String(300))
 
 
 class TimesheetPending(TimesheetMixin, Base):

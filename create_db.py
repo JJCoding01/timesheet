@@ -60,7 +60,11 @@ def generate_fake_timesheets(n_weeks, n_projects, employees, projects):
             days = tuple(random.randint(1, 9) if random.randint(0, 6) % 2 == 0 else None for _ in range(7))
             employee = employees[random.randint(0, len(employees) - 1)]
             project = projects[random.randint(0, len(projects) - 1)]
-            timesheets.append(Timesheet(date, employee, project, days))
+            goal1, goal2 = '', ''
+            for line in range(random.randint(1, 7)):
+                goal1 += get_random_string(random.randint(3, 15)) + '\n'
+                goal2 += get_random_string(random.randint(3, 15)) + '\n'
+            timesheets.append(Timesheet(date, employee, project, goal1, goal2, days))
     return timesheets
 
 def recreate_all():
