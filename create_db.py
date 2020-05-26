@@ -46,8 +46,8 @@ def load_fake_employees(roles):
     ]
     return employees
 
-def generate_fake_projects(n):
-    return [Project(n, get_random_string(15)) for n in range(1000, 1500)]
+def generate_fake_projects(count):
+    return [Project(n, get_random_string(15)) for n in range(1000, 1000 + count)]
 
 def generate_fake_timesheets(n_weeks, n_projects, employees, projects):
     timesheets = []
