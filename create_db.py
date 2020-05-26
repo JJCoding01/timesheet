@@ -31,8 +31,13 @@ def get_random_string(word_count):
         [random_word(random.randrange(10)) for _ in range(word_count)]
     )
 
-def load_fake_roles():
-    return [Role(*role) for role in get_test_data("fake_roles.csv")]
+def generate_fake_roles(count):
+    roles = []
+    for k in range(count):
+        role = Role(f'role{k}', get_random_string(random.randint(5, 15)))
+        roles.append(role)
+    return roles
+
 
 def load_fake_employees(roles):
     employees = [
@@ -65,7 +70,7 @@ def recreate_all():
 
 def populate():
 
-    roles = load_fake_roles()
+    roles = generate_fake_roles(15)
     employees = load_fake_employees(roles)
     projects = generate_fake_projects(1000)
     timesheets = generate_fake_timesheets(52, 100, employees, projects)
