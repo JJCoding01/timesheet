@@ -13,6 +13,7 @@ class Employee(Base):
     first_name = Column("FirstName", String(25), nullable=False)
     last_name = Column("LastName", String(25), nullable=False)
     nickname = Column("Nickname", String(15))
+    username = Column("Username", String(25))
     initials = Column("Initials", String(3))
     active = Column("Active", Boolean, default=True)
     role_id = Column("RoleID", ForeignKey("Roles.RoleID"))
@@ -23,7 +24,7 @@ class Employee(Base):
     )
 
     def __init__(
-        self, first_name, last_name, nickname=None, initials=None, role=None
+        self, first_name, last_name, nickname=None, initials=None, username=None, role=None
     ):
         self.first_name = first_name
         self.last_name = last_name
@@ -35,8 +36,17 @@ class Employee(Base):
         else:
             self.initials = initials
 
+        if username is None:
+            self.username = f"{first_name[0]}{last_name}".lower()
+        else:
+            self.username = initials
+
     def __repr__(self):
         return f"{__class__.__name__}('{self.first_name}', '{self.last_name}', '{self.nickname}', '{self.initials}')"
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
 
 class Role(Base):
