@@ -53,7 +53,7 @@ class Role(Base):
     __tablename__ = "Roles"
     role_id = Column("RoleID", Integer, primary_key=True)
     role = Column("Role", String(10), unique=True, nullable=False)
-    description = Column("Description", String(50))
+    description = Column("Description", String(250))
 
     def __init__(self, role, description=None):
         self.role = role
