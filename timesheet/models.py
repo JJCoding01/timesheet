@@ -1,4 +1,3 @@
-
 from sqlalchemy import UniqueConstraint
 from sqlalchemy import Column, Integer, Date, String, Boolean, ForeignKey, Float
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
@@ -19,12 +18,16 @@ class Employee(Base):
     role_id = Column("RoleID", ForeignKey("Roles.RoleID"))
     role = relationship("Role", backref=backref("Employees", uselist=False))
 
-    __table_args__ = (
-        UniqueConstraint("FirstName", "LastName", name="emp_name"),
-    )
+    __table_args__ = (UniqueConstraint("FirstName", "LastName", name="emp_name"),)
 
     def __init__(
-        self, first_name, last_name, nickname=None, initials=None, username=None, role=None
+        self,
+        first_name,
+        last_name,
+        nickname=None,
+        initials=None,
+        username=None,
+        role=None,
     ):
         self.first_name = first_name
         self.last_name = last_name
@@ -167,7 +170,32 @@ class TimesheetMixin:
 
     @declared_attr
     def project(self):
-        return relationship('Project', backref=backref(f'{self.__name__}', uselist=False))
+        return relationship(
+            "Project", backref=backref(f"{self.__name__}", uselist=False)
+        )
+
+    @property
+    def days(self):
+        return self._days
+
+    @days.setter
+    def days(self, values):
+        if len(values) != 7:
+            raise ValueError(f"Length of days must be 7, not {len(values)}")
+        self._days = values
+
+    @property
+    def total_hrs(self):
+        return sum([hr for hr in self.days if hr])
+
+    @property
+    def get_row(self):
+
+        row = [self.project.number]
+        row.extend(self.days)
+        row.append(self.total_hrs)
+        row.append(self.project.description)
+        return row
 
     # add a column for each day of the week, keep these general, so the
     # first/last day can be customized at the front end. These will store the
