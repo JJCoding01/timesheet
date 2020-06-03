@@ -78,6 +78,42 @@ class Project(Base):
         return f"{__class__.__name__}({self.number}, '{self.description}')"
 
 
+class GoalType(Base):
+    __tablename__ = "GoalTypes"
+    type_id = Column("TypeID", Integer, primary_key=True)
+    type = Column("Type", String(15), nullable=False, unique=True)
+    description = Column("Description", String(150))
+
+    def __init__(self, type, description=None):
+        self.type = type
+        self.description = description
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}('{self.type}', '{self.description}')"
+
+
+class Goal(Base):
+    __tablename__ = "Goals"
+    goal_id = Column("GoalID", Integer, primary_key=True)
+    goal = Column("Goal", String(1500))
+    ending_date = Column("EndingDate", Date, nullable=False)
+    type_id = Column("TypeID", Integer, ForeignKey("GoalTypes.TypeID"), nullable=False)
+    type = relationship("GoalType", backref=backref("Goals", uselist=True))
+    employee_id = Column(
+        "EmployeeID", Integer, ForeignKey("Employees.EmployeeID"), nullable=False
+    )
+    employee = relationship("Employee", backref=backref("Goals", uselist=True))
+
+    def __init__(self, goal, ending_date, type=None, employee=None):
+        self.goal = goal
+        self.ending_date = ending_date
+        self.type = type
+        self.employee = employee
+
+    def __repr__(self):
+        return f"Goal('{self.goal}',..., employee={self.employee})"
+
+
 class TimesheetMixin:
 
     timesheet_id = Column("TimesheetID", Integer, primary_key=True)
