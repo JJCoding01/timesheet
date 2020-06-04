@@ -88,8 +88,8 @@ class GoalType(Base):
     type = Column("Type", String(15), nullable=False, unique=True)
     description = Column("Description", String(150))
 
-    def __init__(self, type, description=None):
-        self.type = type
+    def __init__(self, type_, description=None):
+        self.type = type_
         self.description = description
 
     def __repr__(self):
@@ -108,10 +108,10 @@ class Goal(Base):
     )
     employee = relationship("Employee", backref=backref("Goals", uselist=True))
 
-    def __init__(self, goal, ending_date, type=None, employee=None):
+    def __init__(self, goal, ending_date, type_=None, employee=None):
         self.goal = goal
         self.ending_date = ending_date
-        self.type = type
+        self.type = type_
         self.employee = employee
 
     def __repr__(self):
