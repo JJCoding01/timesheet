@@ -123,7 +123,7 @@ class TimesheetMixin:
     timesheet_id = Column("TimesheetID", Integer, primary_key=True)
     ending_date = Column("EndingDate", Date, nullable=False)
 
-    def __init__(self, date, employee, project, goal1, goal2, days):
+    def __init__(self, date, employee, project, days):
         self.ending_date = date
         self.employee = employee
         self.project = project
