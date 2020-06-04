@@ -55,15 +55,15 @@ class Employee(Base):
 class Role(Base):
     __tablename__ = "Roles"
     role_id = Column("RoleID", Integer, primary_key=True)
-    role = Column("Role", String(10), unique=True, nullable=False)
+    title = Column("Title", String(10), unique=True, nullable=False)
     description = Column("Description", String(250))
 
-    def __init__(self, role, description=None):
-        self.role = role
+    def __init__(self, title, description=None):
+        self.title = title
         self.description = description
 
     def __repr__(self):
-        return f"{__class__.__name__}('{self.role}', '{self.description}')"
+        return f"{__class__.__name__}('{self.title}', '{self.description}')"
 
 
 class Project(Base):
