@@ -73,12 +73,13 @@ class Project(Base):
     description = Column("Description", String(50))
     active = Column("Active", Boolean, default=True)
 
-    def __init__(self, number, description):
+    def __init__(self, number, description, active=True):
         self.number = number
         self.description = description
+        self.active = active
 
     def __repr__(self):
-        return f"{__class__.__name__}({self.number}, '{self.description}')"
+        return f"{__class__.__name__}({self.number}, '{self.description}', {self.active})"
 
 
 class GoalType(Base):
