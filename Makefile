@@ -10,6 +10,7 @@ install:
 
 lint:
 	black $(PACKAGE_NAME) --line-length=79
+	pylint $(PACKAGE_NAME)
 
 lint-tests:
 	black tests --line-length=79
