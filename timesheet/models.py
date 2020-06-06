@@ -173,7 +173,7 @@ class TimesheetMixin:
             f"date={self.ending_date}, "
             f"employee={self.employee}, "
             f"project={self.project}, "
-            f"days=({self.day1}, {self.day2}, ...) ...)"
+            f"days={self.days}"
         )
 
     @declared_attr
