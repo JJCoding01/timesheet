@@ -157,15 +157,6 @@ class TimesheetMixin:
         self.employee = employee
         self.project = project
         self.days = days
-        (
-            self.day1,
-            self.day2,
-            self.day3,
-            self.day4,
-            self.day5,
-            self.day6,
-            self.day7,
-        ) = days
 
     def __repr__(self):
         return (
