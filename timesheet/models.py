@@ -1,5 +1,18 @@
+"""
+Module that defines the database schema and all the models (database tables)
+required to create a timesheet.
+
+"""
 from sqlalchemy import UniqueConstraint
-from sqlalchemy import Column, Integer, Date, String, Boolean, ForeignKey, Float
+from sqlalchemy import (
+    Column,
+    Integer,
+    Date,
+    String,
+    Boolean,
+    ForeignKey,
+    Float,
+)
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import relationship, backref
 
@@ -18,7 +31,9 @@ class Employee(Base):
     role_id = Column("RoleID", ForeignKey("Roles.RoleID"))
     role = relationship("Role", backref=backref("Employees", uselist=False))
 
-    __table_args__ = (UniqueConstraint("FirstName", "LastName", name="emp_name"),)
+    __table_args__ = (
+        UniqueConstraint("FirstName", "LastName", name="emp_name"),
+    )
 
     def __init__(
         self,
@@ -45,10 +60,17 @@ class Employee(Base):
             self.username = initials
 
     def __repr__(self):
-        return f"{__class__.__name__}('{self.first_name}', '{self.last_name}', '{self.nickname}', '{self.initials}')"
+        return (
+            f"{__class__.__name__}("
+            f"'{self.first_name}', "
+            f"'{self.last_name}', "
+            f"'{self.nickname}', "
+            f"'{self.initials}')"
+        )
 
     @property
     def full_name(self):
+        """Read-only property that displays the fullname of Employee"""
         return f"{self.first_name} {self.last_name}"
 
 
@@ -93,7 +115,9 @@ class GoalType(Base):
         self.description = description
 
     def __repr__(self):
-        return f"{self.__class__.__name__}('{self.type}', '{self.description}')"
+        return (
+            f"{self.__class__.__name__}('{self.type}', '{self.description}')"
+        )
 
 
 class Goal(Base):
@@ -101,10 +125,15 @@ class Goal(Base):
     goal_id = Column("GoalID", Integer, primary_key=True)
     goal = Column("Goal", String(1500))
     ending_date = Column("EndingDate", Date, nullable=False)
-    type_id = Column("TypeID", Integer, ForeignKey("GoalTypes.TypeID"), nullable=False)
+    type_id = Column(
+        "TypeID", Integer, ForeignKey("GoalTypes.TypeID"), nullable=False
+    )
     type = relationship("GoalType", backref=backref("Goals", uselist=True))
     employee_id = Column(
-        "EmployeeID", Integer, ForeignKey("Employees.EmployeeID"), nullable=False
+        "EmployeeID",
+        Integer,
+        ForeignKey("Employees.EmployeeID"),
+        nullable=False,
     )
     employee = relationship("Employee", backref=backref("Goals", uselist=True))
 
@@ -154,7 +183,10 @@ class TimesheetMixin:
     @declared_attr
     def employee_id(self):
         return Column(
-            "EmployeeID", Integer, ForeignKey("Employees.EmployeeID"), nullable=False
+            "EmployeeID",
+            Integer,
+            ForeignKey("Employees.EmployeeID"),
+            nullable=False,
         )
 
     @declared_attr
@@ -166,7 +198,10 @@ class TimesheetMixin:
     @declared_attr
     def project_id(self):
         return Column(
-            "ProjectID", Integer, ForeignKey("Projects.ProjectID"), nullable=True
+            "ProjectID",
+            Integer,
+            ForeignKey("Projects.ProjectID"),
+            nullable=True,
         )
 
     @declared_attr
@@ -210,8 +245,8 @@ class TimesheetMixin:
     day7 = Column("Day7", Float)
 
     # add goals
-    goals1 = Column('Goals1', String(300))
-    goals2 = Column('Goals2', String(300))
+    goals1 = Column("Goals1", String(300))
+    goals2 = Column("Goals2", String(300))
 
 
 class TimesheetPending(TimesheetMixin, Base):
