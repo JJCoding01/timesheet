@@ -9,7 +9,7 @@ install:
 	python setup.py install
 
 lint:
-	black $(PACKAGE_NAME) --line-length=79
+	black $(PACKAGE_NAME)
 	pylint $(PACKAGE_NAME)
 
 lint-tests:
