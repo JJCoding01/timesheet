@@ -137,7 +137,13 @@ class Goal(Base):
         self.employee = employee
 
     def __repr__(self):
-        return f"Goal('{self.goal}',..., employee={self.employee})"
+        return (
+            f"Goal("
+            f"goal='{self.goal}',"
+            f"ending_date={self.ending_date},"
+            f"type_={self.type},"
+            f"employee={self.employee})"
+        )
 
 
 class TimesheetMixin:
