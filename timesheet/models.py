@@ -75,7 +75,7 @@ class Employee(Base):
 class Role(Base):
     __tablename__ = "Roles"
     role_id = Column("RoleID", Integer, primary_key=True)
-    title = Column("Title", String(10), unique=True, nullable=False)
+    title = Column("Title", String(75), unique=True, nullable=False)
     description = Column("Description", String(250))
 
     def __init__(self, title, description=None):
@@ -107,8 +107,8 @@ class Project(Base):
 class GoalType(Base):
     __tablename__ = "GoalTypes"
     type_id = Column("TypeID", Integer, primary_key=True)
-    type = Column("Type", String(15), nullable=False, unique=True)
-    description = Column("Description", String(150))
+    type = Column("Type", String(50), nullable=False, unique=True)
+    description = Column("Description", String(250))
 
     def __init__(self, type_, description=None):
         self.type = type_
