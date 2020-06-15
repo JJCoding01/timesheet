@@ -2,13 +2,13 @@ import pytest
 
 from PyQt5.QtCore import QDate
 
-from timesheet.gui.run_gui import MyApp
+from timesheet.gui.MainWindow import MainWindow
 
 
 @pytest.fixture()
 def app():
     # app_ = QApplication(sys.argv)
-    window = MyApp()
+    window = MainWindow()
     window.show()
     yield window
 
