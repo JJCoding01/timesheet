@@ -31,9 +31,7 @@ class Employee(Base):
     role_id = Column("RoleID", ForeignKey("Roles.RoleID"))
     role = relationship("Role", backref=backref("Employees", uselist=False))
 
-    __table_args__ = (
-        UniqueConstraint("FirstName", "LastName", name="emp_name"),
-    )
+    __table_args__ = (UniqueConstraint("FirstName", "LastName", name="emp_name"),)
 
     def __init__(
         self,
@@ -101,7 +99,9 @@ class Project(Base):
         self.active = active
 
     def __repr__(self):
-        return f"{__class__.__name__}({self.number}, '{self.description}', {self.active})"
+        return (
+            f"{__class__.__name__}({self.number}, '{self.description}', {self.active})"
+        )
 
 
 class GoalType(Base):
@@ -115,9 +115,7 @@ class GoalType(Base):
         self.description = description
 
     def __repr__(self):
-        return (
-            f"{self.__class__.__name__}('{self.type}', '{self.description}')"
-        )
+        return f"{self.__class__.__name__}('{self.type}', '{self.description}')"
 
 
 class Goal(Base):
@@ -125,15 +123,10 @@ class Goal(Base):
     goal_id = Column("GoalID", Integer, primary_key=True)
     goal = Column("Goal", String(1500))
     ending_date = Column("EndingDate", Date, nullable=False)
-    type_id = Column(
-        "TypeID", Integer, ForeignKey("GoalTypes.TypeID"), nullable=False
-    )
+    type_id = Column("TypeID", Integer, ForeignKey("GoalTypes.TypeID"), nullable=False)
     type = relationship("GoalType", backref=backref("Goals", uselist=True))
     employee_id = Column(
-        "EmployeeID",
-        Integer,
-        ForeignKey("Employees.EmployeeID"),
-        nullable=False,
+        "EmployeeID", Integer, ForeignKey("Employees.EmployeeID"), nullable=False,
     )
     employee = relationship("Employee", backref=backref("Goals", uselist=True))
 
@@ -174,10 +167,7 @@ class TimesheetMixin:
     @declared_attr
     def employee_id(self):
         return Column(
-            "EmployeeID",
-            Integer,
-            ForeignKey("Employees.EmployeeID"),
-            nullable=False,
+            "EmployeeID", Integer, ForeignKey("Employees.EmployeeID"), nullable=False,
         )
 
     @declared_attr
@@ -189,10 +179,7 @@ class TimesheetMixin:
     @declared_attr
     def project_id(self):
         return Column(
-            "ProjectID",
-            Integer,
-            ForeignKey("Projects.ProjectID"),
-            nullable=True,
+            "ProjectID", Integer, ForeignKey("Projects.ProjectID"), nullable=True,
         )
 
     @declared_attr

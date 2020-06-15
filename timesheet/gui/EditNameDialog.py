@@ -23,9 +23,7 @@ class EditNameDialog(QtWidgets.QDialog, Ui_MainWindow):
         self.session = Session()
         print(employee_id)
         self.employee = (
-            self.session.query(db.Employee)
-            .filter_by(employee_id=employee_id)
-            .first()
+            self.session.query(db.Employee).filter_by(employee_id=employee_id).first()
         )
         # self.role = self.employee.role
         # print(self.role)
