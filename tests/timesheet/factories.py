@@ -1,3 +1,4 @@
+from datetime import datetime
 import factory
 from faker import Faker
 
@@ -45,7 +46,7 @@ class GoalFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = models.Goal
 
     goal = "\n".join(fake.paragraphs(nb=4))
-    ending_date = fake.date()
+    ending_date = datetime.strptime(fake.date(), "%Y-%m-%d")
     type_ = factory.SubFactory(GoalTypeFactory)
     employee = factory.SubFactory(EmployeeFactory)
 
@@ -54,7 +55,7 @@ class TimesheetFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = models.Timesheet
 
-    date = fake.date()
+    date = datetime.strptime(fake.date(), "%Y-%m-%d")
     employee = factory.SubFactory(EmployeeFactory)
     project = factory.SubFactory(ProjectFactory)
     days = [1 for _ in range(7)]
