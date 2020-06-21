@@ -56,7 +56,7 @@ class GoalFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = models.Goal
 
-    goal = "\n".join(fake.paragraphs(nb=4))
+    text = "\n".join(fake.paragraphs(nb=4))
     ending_date = factory.Sequence(lambda n: datetime.strptime(fake.date(), "%Y-%m-%d"))
     type_ = factory.SubFactory(GoalTypeFactory)
     employee = factory.SubFactory(EmployeeFactory)

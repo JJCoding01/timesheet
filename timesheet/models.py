@@ -121,7 +121,7 @@ class GoalType(Base):
 class Goal(Base):
     __tablename__ = "Goals"
     goal_id = Column("GoalID", Integer, primary_key=True)
-    goal = Column("Goal", String(1500))
+    text = Column("Text", String(1500))
     ending_date = Column("EndingDate", Date, nullable=False)
     type_id = Column("TypeID", Integer, ForeignKey("GoalTypes.TypeID"), nullable=False)
     type = relationship("GoalType", backref=backref("Goals", uselist=True))
@@ -130,8 +130,8 @@ class Goal(Base):
     )
     employee = relationship("Employee", backref=backref("Goals", uselist=True))
 
-    def __init__(self, goal, ending_date, type_=None, employee=None):
-        self.goal = goal
+    def __init__(self, text, ending_date, type_=None, employee=None):
+        self.text = text
         self.ending_date = ending_date
         self.type = type_
         self.employee = employee

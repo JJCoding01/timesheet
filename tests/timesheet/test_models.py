@@ -78,7 +78,7 @@ def test_create_goal_type(create_and_get):
 
 def test_create_goal(create_and_get):
     goal, db_goal = create_and_get(factories.GoalFactory, models.Goal)
-    assert goal.goal == db_goal.goal
+    assert goal.text == db_goal.text
     assert goal.ending_date == db_goal.ending_date
     assert goal.employee.employee_id == db_goal.employee.employee_id
     assert goal.type.type_id == db_goal.type.type_id
