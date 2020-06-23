@@ -16,6 +16,9 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import relationship, backref
 
+from timesheet.conf import EMAIL_DOMAIN
+
+
 Base = declarative_base()
 
 
@@ -27,6 +30,7 @@ class Employee(Base):
     nickname = Column("Nickname", String(15))
     username = Column("Username", String(25))
     initials = Column("Initials", String(3))
+    email = Column("Email", String(25), unique=True, nullable=False)
     active = Column("Active", Boolean, default=True)
     role_id = Column("RoleID", ForeignKey("Roles.RoleID"))
     role = relationship("Role", backref=backref("Employees", uselist=False))
@@ -40,10 +44,12 @@ class Employee(Base):
         nickname=None,
         initials=None,
         username=None,
+        email=None,
         role=None,
     ):
         self.first_name = first_name
         self.last_name = last_name
+        self.email = email
         self.nickname = nickname
         self.role = role
 
@@ -55,7 +61,12 @@ class Employee(Base):
         if username is None:
             self.username = f"{first_name[0]}{last_name}".lower()
         else:
-            self.username = initials
+            self.username = username
+
+        if email is None:
+            self.email = f"{first_name[0]}{last_name}{EMAIL_DOMAIN}".lower()
+        else:
+            self.email = email
 
     def __repr__(self):
         return (
