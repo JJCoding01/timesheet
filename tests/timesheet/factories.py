@@ -46,7 +46,7 @@ class EntryFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = models.Entry
 
     ending_date = factory.Sequence(lambda n: datetime.strptime(fake.date(), "%Y-%m-%d"))
-    description = factory.Sequence(lambda n: fake.sentence(nb_words=5))
+    note = factory.Sequence(lambda n: fake.sentence(nb_words=5))
     employee = factory.SubFactory(EmployeeFactory)
     project = factory.SubFactory(ProjectFactory)
     days = [1 for _ in range(7)]
