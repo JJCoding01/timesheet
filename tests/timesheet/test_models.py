@@ -84,8 +84,65 @@ def test_create_goal(create_and_get):
     assert goal.type.type_id == db_goal.type.type_id
 
 
-def test_create_timesheet(create_and_get):
-    ts, db_ts = create_and_get(factories.TimesheetFactory, models.Timesheet)
-    assert ts.ending_date == db_ts.ending_date
-    assert ts.employee.employee_id == db_ts.employee.employee_id
-    assert ts.project.project_id == db_ts.project.project_id
+def test_create_entry(create_and_get):
+    entry, db_entry = create_and_get(factories.EntryFactory, models.Entry)
+    assert entry.employee_id == db_entry.employee_id
+    assert entry.ending_date == db_entry.ending_date
+    assert entry.project_id == db_entry.project_id
+
+
+@pytest.mark.parametrize("lengths", [0, 1, 2, 8])
+def test_entry_invalid_day_count(lengths):
+    with pytest.raises(ValueError):
+        factories.EntryFactory(days=[2 for _ in range(lengths)])
+
+
+@pytest.mark.parametrize("daily_hours", [1, 2, 5, 9, 12])
+def test_entry_sum_hours(daily_hours):
+    expected_total = daily_hours * 7
+    e = factories.EntryFactory(days=[daily_hours for _ in range(7)])
+    assert e.total_hours == expected_total
+
+
+def test_display_row():
+    entry = factories.EntryFactory.build()
+    expected_display_row = [entry.project.number]
+    expected_display_row.extend(entry.days)
+    expected_display_row.append(entry.total_hours)
+    expected_display_row.append(entry.project.description)
+
+    assert len(expected_display_row) == len(entry.display_row)
+    for expected, actual in zip(expected_display_row, entry.display_row):
+        assert expected == actual
+
+
+def test_employee_nickname():
+    emp_default = factories.EmployeeFactory.build()
+    assert emp_default.nickname is None
+
+    emp = factories.EmployeeFactory(nickname="Bill")
+    assert emp.nickname == "Bill"
+
+
+def test_employee_initials():
+    emp_default = factories.EmployeeFactory(first_name="William", last_name="Rodgers")
+    assert emp_default.initials == "WR"
+
+    emp = factories.EmployeeFactory(initials="WTR")
+    assert emp.initials == "WTR"
+
+
+def test_employee_username():
+    emp_default = factories.EmployeeFactory(first_name="William", last_name="Rodgers")
+    assert emp_default.username == "wrodgers"
+
+    emp = factories.EmployeeFactory(username="rodgersusername")
+    assert emp.username == "rodgersusername"
+
+
+def test_employee_email():
+    emp_default = factories.EmployeeFactory(first_name="William", last_name="Rodgers")
+    assert emp_default.email == "wrodgers@example.com"
+
+    emp = factories.EmployeeFactory(email="will@example.com")
+    assert emp.email == "will@example.com"
