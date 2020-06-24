@@ -60,13 +60,3 @@ class GoalFactory(factory.alchemy.SQLAlchemyModelFactory):
     ending_date = factory.Sequence(lambda n: datetime.strptime(fake.date(), "%Y-%m-%d"))
     type_ = factory.SubFactory(GoalTypeFactory)
     employee = factory.SubFactory(EmployeeFactory)
-
-
-class TimesheetFactory(factory.alchemy.SQLAlchemyModelFactory):
-    class Meta:
-        model = models.Timesheet
-
-    date = datetime.strptime(fake.date(), "%Y-%m-%d")
-    employee = factory.SubFactory(EmployeeFactory)
-    project = factory.SubFactory(ProjectFactory)
-    days = [1 for _ in range(7)]

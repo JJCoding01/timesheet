@@ -21,12 +21,12 @@ def connection():
 def session(connection):
     transaction = connection.begin()
     _session = Session(bind=connection)
-    factories.TimesheetFactory._meta.sqlalchemy_session = _session
     factories.EmployeeFactory._meta.sqlalchemy_session = _session
     factories.GoalFactory._meta.sqlalchemy_session = _session
     factories.GoalTypeFactory._meta.sqlalchemy_session = _session
     factories.RoleFactory._meta.sqlalchemy_session = _session
     factories.ProjectFactory._meta.sqlalchemy_session = _session
+    factories.EntryFactory._meta.sqlalchemy_session = _session
     yield _session
     _session.close()
     transaction.rollback()
@@ -109,7 +109,7 @@ def test_display_row():
     expected_display_row = [entry.project.number]
     expected_display_row.extend(entry.days)
     expected_display_row.append(entry.total_hours)
-    expected_display_row.append(entry.project.description)
+    expected_display_row.append(entry.note)
 
     assert len(expected_display_row) == len(entry.display_row)
     for expected, actual in zip(expected_display_row, entry.display_row):

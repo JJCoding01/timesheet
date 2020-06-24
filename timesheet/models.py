@@ -157,13 +157,36 @@ class Goal(Base):
         )
 
 
-class TimesheetMixin:
+class Entry(Base):
 
-    timesheet_id = Column("TimesheetID", Integer, primary_key=True)
+    __tablename__ = "Entries"
+    entry_id = Column("EntryID", Integer, primary_key=True)
     ending_date = Column("EndingDate", Date, nullable=False)
+    note = Column("Note", String(125), nullable=True)
+    employee_id = Column(
+        "EmployeeID", Integer, ForeignKey("Employees.EmployeeID"), nullable=False
+    )
+    project_id = Column(
+        "ProjectID", Integer, ForeignKey("Projects.ProjectID"), nullable=True
+    )
 
-    def __init__(self, date, employee, project, days):
-        self.ending_date = date
+    # add a column for each day of the week, keep these general, so the
+    # first/last day can be customized at the front end. These will store the
+    # hours related to the project
+    day1 = Column("Day1", Float)
+    day2 = Column("Day2", Float)
+    day3 = Column("Day3", Float)
+    day4 = Column("Day4", Float)
+    day5 = Column("Day5", Float)
+    day6 = Column("Day6", Float)
+    day7 = Column("Day7", Float)
+
+    employee = relationship("Employee", backref=backref(f"Entries"), uselist=False)
+    project = relationship("Project", backref=backref(f"Entries", uselist=False))
+
+    def __init__(self, ending_date, note, employee, project, days):
+        self.ending_date = ending_date
+        self.note = note
         self.employee = employee
         self.project = project
         self.days = days
@@ -171,38 +194,11 @@ class TimesheetMixin:
     def __repr__(self):
         return (
             f"{__class__.__name__}("
-            f"date={self.ending_date}, "
+            f"ending_date={self.ending_date}, "
+            f"note='{self.note}', "
             f"employee={self.employee}, "
             f"project={self.project}, "
             f"days={self.days}"
-        )
-
-    @declared_attr
-    def __tablename__(self):
-        return f"{self.__name__}s"
-
-    @declared_attr
-    def employee_id(self):
-        return Column(
-            "EmployeeID", Integer, ForeignKey("Employees.EmployeeID"), nullable=False,
-        )
-
-    @declared_attr
-    def employee(self):
-        return relationship(
-            "Employee", backref=backref(f"{self.__name__}"), uselist=False
-        )
-
-    @declared_attr
-    def project_id(self):
-        return Column(
-            "ProjectID", Integer, ForeignKey("Projects.ProjectID"), nullable=True,
-        )
-
-    @declared_attr
-    def project(self):
-        return relationship(
-            "Project", backref=backref(f"{self.__name__}", uselist=False)
         )
 
     @property
@@ -216,37 +212,14 @@ class TimesheetMixin:
         self._days = values
 
     @property
-    def total_hrs(self):
-        return sum([hr for hr in self.days if hr])
+    def total_hours(self):
+        return sum(self.days)
 
     @property
-    def get_row(self):
+    def display_row(self):
 
         row = [self.project.number]
         row.extend(self.days)
-        row.append(self.total_hrs)
-        row.append(self.project.description)
+        row.append(self.total_hours)
+        row.append(self.note)
         return row
-
-    # add a column for each day of the week, keep these general, so the
-    # first/last day can be customized at the front end. These will store the
-    # hours related to the project
-    day1 = Column("Day1", Float)
-    day2 = Column("Day2", Float)
-    day3 = Column("Day3", Float)
-    day4 = Column("Day4", Float)
-    day5 = Column("Day5", Float)
-    day6 = Column("Day6", Float)
-    day7 = Column("Day7", Float)
-
-    # add goals
-    goals1 = Column("Goals1", String(300))
-    goals2 = Column("Goals2", String(300))
-
-
-class TimesheetPending(TimesheetMixin, Base):
-    __tablename__ = "TimesheetsPending"
-
-
-class Timesheet(TimesheetMixin, Base):
-    pass
