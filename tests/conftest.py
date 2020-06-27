@@ -17,6 +17,7 @@ def connection():
     _connection.close()
     models.Base.metadata.drop_all(engine)
 
+
 @pytest.fixture(scope="function")
 def session(connection):
     transaction = connection.begin()
@@ -30,6 +31,7 @@ def session(connection):
     yield _session
     _session.close()
     transaction.rollback()
+
 
 @pytest.fixture()
 def create_and_get(session):
@@ -47,5 +49,3 @@ def create_and_get(session):
         return f, db_f
 
     yield create
-
-
