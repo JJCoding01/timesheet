@@ -26,14 +26,14 @@ class EditNameDialog(QtWidgets.QDialog, Ui_MainWindow):
     def setupUi(self):
         super(EditNameDialog, self).setupUi(self)
 
-        self.first_name.setText(self.employee.first_name)
-        self.last_name.setText(self.employee.last_name)
-        self.initials.setText(self.employee.initials)
-        self.username.setText(self.employee.username)
-        self.nickname.setText(self.employee.nickname)
-        self.email.setText(self.employee.email)
-        self.active.setChecked(self.employee.active)
-        self.employee_id.setText(str(self.employee.employee_id))
+        self.first_name = self.employee.first_name
+        self.last_name = self.employee.last_name
+        self.initials = self.employee.initials
+        self.username = self.employee.username
+        self.nickname = self.employee.nickname
+        self.email = self.employee.email
+        self.active = self.employee.active
+        self.employee_id_field.setText(str(self.employee.employee_id))
 
         # populate dropdown with all roles
         self.__populate_role_dropdown()
@@ -51,20 +51,104 @@ class EditNameDialog(QtWidgets.QDialog, Ui_MainWindow):
             self.__roles.setdefault(role.title, {"id": role.role_id, "index": k})
             self.role_dropdown.addItem(f"{role.title}")
 
+    @property
+    def first_name(self):
+        text = self.first_name_field.text()
+        if text == '':
+            return None
+        return text
+
+    @first_name.setter
+    def first_name(self, name):
+        name = name if name is not None else ''
+        self.first_name_field.setText(name)
+
+    @property
+    def last_name(self):
+        text = self.last_name_field.text()
+        if text == '':
+            return None
+        return text
+
+    @last_name.setter
+    def last_name(self, name):
+        name = name if name is not None else ''
+        self.last_name_field.setText(name)
+
+    @property
+    def nickname(self):
+        text = self.nickname_field.text()
+        if text == '':
+            return None
+        return text
+
+    @nickname.setter
+    def nickname(self, name):
+        name = name if name is not None else ''
+        self.nickname_field.setText(name)
+
+
+    @property
+    def initials(self):
+        text = self.initials_field.text()
+        if text == '':
+            return None
+        return text
+
+    @initials.setter
+    def initials(self, name):
+        name = name if name is not None else ''
+        self.initials_field.setText(name)
+
+    @property
+    def username(self):
+        text = self.username_field.text()
+        if text == '':
+            return None
+        return text
+
+    @username.setter
+    def username(self, name):
+        name = name if name is not None else ''
+        self.username_field.setText(name)
+
+    @property
+    def email(self):
+        text = self.email_field.text()
+        if text == '':
+            return None
+        return text
+
+    @email.setter
+    def email(self, address):
+        address = address if address is not None else ''
+        self.email_field.setText(address)
+
+    @property
+    def active(self):
+        return self.active_field.isChecked()
+
+    @active.setter
+    def active(self, bool):
+        self.active_field.setChecked(bool)
+
+
     def ok(self):
-        self.employee.first_name = self.first_name.text()
-        self.employee.last_name = self.last_name.text()
-        self.employee.nickname = self.nickname.text()
-        self.employee.initials = self.initials.text()
-        self.employee.email = self.email.text()
-        self.employee.username = self.username.text()
-        self.employee.active = self.active.isChecked()
+        self.employee.first_name = self.first_name
+        self.employee.last_name = self.last_name
+        self.employee.nickname = self.nickname
+        self.employee.initials = self.initials
+        self.employee.email = self.email
+        self.employee.username = self.username
+        self.employee.active = self.active
 
         # get the role id
         self.employee.role_id = self.__roles[self.role_dropdown.currentText()]["id"]
 
-        self.session.commit()
-        self.session.close()
+        try:
+            self.session.commit()
+        except Exception as e:
+            print(e)
         print("ok button was pressed")
 
     def cancel(self):
