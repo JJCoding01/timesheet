@@ -1,28 +1,21 @@
 from pathlib import Path
 from PyQt5 import QtWidgets, uic
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from timesheet import models as db
-from timesheet.conf import DATABASE_URI
-
-engine = create_engine(DATABASE_URI, echo=False)
-Session = sessionmaker(bind=engine)
+from timesheet.conf import Session
 
 UIFilename = Path(__file__).parent / "EditNameDialog.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(UIFilename)
 
 
 class EditNameDialog(QtWidgets.QDialog, Ui_MainWindow):
-    def __init__(self, employee_id):
-        QtWidgets.QDialog.__init__(self, flags=None)
+    def __init__(self, employee, roles, session=None):
+        QtWidgets.QDialog.__init__(self)
         Ui_MainWindow.__init__(self)
-
-        self.session = Session()
-        self.employee = (
-            self.session.query(db.Employee).filter_by(employee_id=employee_id).first()
-        )
+        self.employee = employee
+        self.roles = roles
+        if session is None:
+            self.session = Session()
+        else:
+            self.session = session
 
         self.setupUi()
 
@@ -53,9 +46,8 @@ class EditNameDialog(QtWidgets.QDialog, Ui_MainWindow):
     def __populate_role_dropdown(self):
         """Populate role dropdown with all roles"""
 
-        roles = self.session.query(db.Role).all()
         self.__roles = {}
-        for k, role in enumerate(roles):
+        for k, role in enumerate(self.roles):
             self.__roles.setdefault(role.title, {"id": role.role_id, "index": k})
             self.role_dropdown.addItem(f"{role.title}")
 
