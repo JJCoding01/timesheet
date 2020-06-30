@@ -28,7 +28,7 @@ class Employee(Base):
     first_name = Column("FirstName", String(25), nullable=False)
     last_name = Column("LastName", String(25), nullable=False)
     nickname = Column("Nickname", String(15))
-    username = Column("Username", String(25))
+    username = Column("Username", String(25), nullable=False)
     initials = Column("Initials", String(3))
     email = Column("Email", String(25), unique=True, nullable=False)
     active = Column("Active", Boolean, default=True)
