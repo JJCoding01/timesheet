@@ -101,9 +101,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # print('goal type', goal_type, goal_type.type_id)
             # print('employee', self.employee)
 
-            goal = db.Goal(
-                text, self.get_date(), type=goal_type, employee=self.employee
-            )
+            # goal = db.Goal(
+            #     text, self.get_date(), type=goal_type, employee=self.employee
+            # )
             # print(goal)
             self.session.add(goal)
             print("end creating goal")
@@ -119,9 +119,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if text == "":
                 return
             goal_type = self.session.query(db.GoalType).filter_by(type_id=2).first()
-            goal = db.Goal(
-                text, self.get_date(), type=goal_type, employee=self.employee
-            )
+            # goal = db.Goal(
+            #     text, self.get_date(), type=goal_type, employee=self.employee
+            # )
             self.session.add(goal)
 
     def get_date(self):
@@ -160,17 +160,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             print(e)
 
     def populate_table(self):
-        timesheets = (
-            self.session.query(db.Timesheet)
-            .filter(db.Timesheet.employee_id == self.employee.employee_id)
-            .filter(db.Timesheet.ending_date == self.get_date())
-        )
-
-        self.tableWidget.setRowCount(0)
-        for r, timesheet in enumerate(timesheets):
-            self.tableWidget.insertRow(r)
-            for c, column in enumerate(timesheet.get_row):
-                self.tableWidget.setItem(r, c, QtWidgets.QTableWidgetItem(str(column)))
+        # timesheets = (
+        #     self.session.query(db.Timesheet)
+        #     .filter(db.Timesheet.employee_id == self.employee.employee_id)
+        #     .filter(db.Timesheet.ending_date == self.get_date())
+        # )
+        #
+        # self.tableWidget.setRowCount(0)
+        # for r, timesheet in enumerate(timesheets):
+        #     self.tableWidget.insertRow(r)
+        #     for c, column in enumerate(timesheet.get_row):
+        #         self.tableWidget.setItem(r, c, QtWidgets.QTableWidgetItem(str(column)))
+        pass
 
     # @staticmethod
     def ok(self):
