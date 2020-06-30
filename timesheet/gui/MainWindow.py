@@ -39,7 +39,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @property
     def employee(self):
-        if self.__employee is None:
+        if self.__employee is None or self.employee_id != self.__employee.employee_id:
             employee_id = self.employee_id.text()
             self.__employee = (
                 self.session.query(db.Employee)
