@@ -21,6 +21,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.session = Session()
         self.__employee = None
+        self.__roles = None
 
         # self.fullname.editingFinished.connect(self.name_changed)
         self.date_field.dateChanged.connect(self.date_changed)
@@ -47,6 +48,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 .first()
             )
         return self.__employee
+
+    @property
+    def roles(self):
+        if self.__roles is None:
+            self.__roles = self.session.query(db.Role).all()
+        return self.__roles
 
     def date_changed(self):
         self.set_goal_labels()
@@ -144,8 +151,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.fullname.setText(self.employee.full_name)
 
     def edit_name(self):
-        self.edit_name_dialog = EditNameDialog(self.employee_id.text())
-        self.edit_name_dialog.exec()
+        # self.edit_name_dialog = EditNameDialog(self.employee_id.text())
+        print('employee starting edit dialog', self.employee)
+        try:
+            self.edit_name_dialog = EditNameDialog(self.employee, self.roles, session=self.session)
+            self.edit_name_dialog.exec()
+        except Exception as e:
+            print(e)
 
     def populate_table(self):
         timesheets = (
