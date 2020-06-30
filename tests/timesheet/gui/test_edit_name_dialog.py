@@ -6,33 +6,33 @@
 #     return string
 
 
-def test_first_name(app, employee):
-    assert employee.first_name == app.first_name
+def test_first_name(edit_name_dialog, employee):
+    assert employee.first_name == edit_name_dialog.first_name
 
 
-def test_last_name(app, employee):
-    assert employee.last_name == app.last_name
+def test_last_name(edit_name_dialog, employee):
+    assert employee.last_name == edit_name_dialog.last_name
 
 
-def test_nickname(app, employee):
-    assert employee.nickname == app.nickname
+def test_nickname(edit_name_dialog, employee):
+    assert employee.nickname == edit_name_dialog.nickname
 
 
-def test_initials(app, employee):
-    assert employee.initials == app.initials
+def test_initials(edit_name_dialog, employee):
+    assert employee.initials == edit_name_dialog.initials
 
 
-def test_username(app, employee):
-    assert employee.username == app.username
+def test_username(edit_name_dialog, employee):
+    assert employee.username == edit_name_dialog.username
 
 
-def test_email(app, employee):
-    assert employee.email == app.email
+def test_email(edit_name_dialog, employee):
+    assert employee.email == edit_name_dialog.email
 
 
-def test_role(app, employee):
-    assert employee.role.title == app.role_dropdown.currentText()
+def test_role(edit_name_dialog, employee):
+    assert employee.role.title == edit_name_dialog.role_dropdown.currentText()
 
 
-def test_active(app, employee):
-    assert employee.active == app.active
+def test_active(edit_name_dialog, employee):
+    assert employee.active == edit_name_dialog.active

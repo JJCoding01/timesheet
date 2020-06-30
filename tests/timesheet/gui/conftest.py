@@ -18,7 +18,7 @@ def employee(session):
 
 
 @pytest.fixture(scope="function")
-def app(employee):
+def edit_name_dialog(employee):
     app_ = QApplication(sys.argv)
 
     window = EditNameDialog(employee=employee, roles=[employee.role])
