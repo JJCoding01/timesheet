@@ -2,19 +2,13 @@ import sys
 
 from pathlib import Path
 from datetime import datetime, timedelta
-from PyQt5 import QtWidgets, uic, QtGui
+from PyQt5 import QtWidgets, uic
 
-# from PyQt5 import QtGui
-
-from sqlalchemy import create_engine, and_
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import and_
 
 from timesheet.gui.EditNameDialog import EditNameDialog
 from timesheet import models as db
-from timesheet.conf import DATABASE_URI
-
-engine = create_engine(DATABASE_URI, echo=False)
-Session = sessionmaker(bind=engine)
+from timesheet.conf import Session
 
 UIFilename = Path(__file__).parent / "MainWindow.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(UIFilename)
