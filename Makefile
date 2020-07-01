@@ -25,6 +25,9 @@ test-gui:
 tests-ci:
 	pytest --cov-report html --cov=$(PACKAGE_NAME) tests/$(PACKAGE_NAME) -v
 
+tests-no-gui:
+	pytest -v -m "not gui" tests/$(PACKAGE_NAME)
+
 gui:
 	pyuic5 -x $(PACKAGE_NAME)/gui/mainWindow.ui -o $(PACKAGE_NAME)/gui/main_window.py
 
