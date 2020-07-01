@@ -8,3 +8,4 @@ pylint
 factory_boy
 Faker
 psycopg2
+coveralls
