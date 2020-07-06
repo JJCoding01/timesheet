@@ -1,8 +1,13 @@
 import sys
 
+
 from pathlib import Path
 from datetime import datetime, timedelta
-from PyQt5 import QtWidgets, uic
+
+from PyQt5 import QtWidgets, uic, QtCore, QtGui
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
+
 
 from sqlalchemy import and_
 
@@ -12,6 +17,150 @@ from timesheet.conf import Session
 
 UIFilename = Path(__file__).parent / "MainWindow.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(UIFilename)
+
+
+def showDialog(message="", title="Sample title", icon=QMessageBox.Information):
+    msgBox = QMessageBox()
+    msgBox.setIcon(icon)
+    msgBox.setText(message)
+    msgBox.setWindowTitle(title)
+    msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+
+    return msgBox.exec()
+
+
+class TableModel(QtCore.QAbstractTableModel):
+    def __init__(self, data):
+        super(TableModel, self).__init__()
+        self._data = data
+        self.total_column = 8
+
+    def flags(self, index):
+        if index.column() == self.total_column or index.row() == self.rowCount() - 1:
+            return Qt.ItemIsEnabled
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable
+
+    def headerData(self, section, orientation, role):
+        # section is the index of the column/row.
+        headers = [
+            "Project number",
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Total",
+            "Description",
+        ]
+        if role == Qt.DisplayRole:
+            if orientation == Qt.Horizontal:
+                return str(headers[section])
+
+    def rowCount(self, parent=None, *args, **kwargs):
+        return len(self._data)
+
+    def columnCount(self, parent=None, *args, **kwargs):
+        return len(self._data[0])
+
+    def data(self, index, role):
+        value = self._data[index.row()][index.column()]
+        if role == Qt.BackgroundColorRole:
+            if index.row() % 2 == 0:
+                return QtGui.QColor("lightgray")
+
+        if index.column() == 0 and index.row() != self.rowCount() - 1:
+            return self._format_project_numbers(index, role)
+        if index.column() == self.total_column:
+            return self._format_totals(index, role)
+        if index.row() == self.rowCount() - 1:
+            return self._format_totals(index, role)
+        if index.column() == self.columnCount() - 1:
+            return self._format_description(index, role)
+
+        return self._format_hours(index, role)
+
+    def _format_project_numbers(self, index, role):
+        value = self._data[index.row()][index.column()]
+        if role == Qt.DisplayRole:
+            try:
+                value = int(value)
+                return f"{value:.0f}"
+            except (ValueError, TypeError):
+                return str(value)
+        if role == Qt.ToolTipRole:
+            return f"tooltip for {value}"
+        # if role == Qt.StatusTipRole:
+        #     return f'this is the status bar tip for project {value}'
+        if role == Qt.DecorationRole:
+            return QtGui.QColor("green")
+        if role == Qt.FontRole:
+            return QtGui.QFont("Times", 10, QtGui.QFont.Bold)
+        if role == Qt.EditRole:
+            return value
+
+    def _format_totals(self, index, role):
+        value = self._data[index.row()][index.column()]
+        if role == Qt.DisplayRole:
+            if value == "":
+                return ""
+            else:
+                return f"{value:.2f}"
+        # if role == Qt.BackgroundColorRole:
+        #     return QtGui.QColor('gray')
+        if role == Qt.TextAlignmentRole:
+            return Qt.AlignCenter
+        if role == Qt.FontRole:
+            return QtGui.QFont("Times", 10, QtGui.QFont.Bold)
+
+    def _format_description(self, index, role):
+        value = self._data[index.row()][index.column()]
+        if role == Qt.DisplayRole:
+            return value
+        if role == Qt.FontRole:
+            return QtGui.QFont("Times", 10)
+        if role == Qt.EditRole:
+            return value
+
+    def _format_hours(self, index, role):
+        value = self._data[index.row()][index.column()]
+        if role == Qt.DisplayRole:
+            if isinstance(value, (float, int)):
+                return f"{value:0.2f}"
+            return value
+        if role == Qt.StatusTipRole:
+            return f"Enter hours for project"
+
+    def setData(self, index, value, role=Qt.EditRole):
+        if role == Qt.EditRole:
+            print("edit data", value)
+            if index.column() == 9:  # description/notes column
+                self._data[index.row()][index.column()] = value
+                return True
+            if index.column() == 0:  # project number column
+                if len(str(value)) != 6:
+                    print("invalid project number: {value}")
+                else:
+                    try:
+                        self._data[index.row()][index.column()] = int(value)
+                    except ValueError:
+                        print(f"could not update with float. using default: {value}")
+                return True
+            # for all other columns...
+            try:
+                self._data[index.row()][index.column()] = float(value)
+            except ValueError:
+                print(f"could not update with int. using default: {value}")
+                response = showDialog(
+                    message=f"invalid entry: {value}\ndo you want to continue?",
+                    title="Invalid Entry",
+                    icon=QMessageBox.Warning,
+                )
+                if response == QMessageBox.Ok:
+                    self._data[index.row()][index.column()] = value
+        return True
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -37,6 +186,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.employee_id.setText("2")
 
         self.populate_table()
+
+        # ------------------
+        self.data = [
+            [111456, 3.25, 1, 2, 6, 2, 3, 4, 23, "some description"],
+            [222456, 2, 4, 2, 3, 2, 3, 4, 27, "row 2 description"],
+            [333456, 4, 4, 3, 5, 2, 3, 4, 27, "row 2 description"],
+            [444456, 8, 4, 4, 6, 2, 3, 4, 27, "row 2 description"],
+            ["", 6, 8, 10, 12, 4, 6, 8, 27, ""],  # totals row
+        ]
+        self.model = TableModel(self.data)
+        self.tableView.setModel(self.model)
+        header = self.tableView.horizontalHeader()
+
+        for x in range(8):
+            header.setSectionResizeMode(x, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(9, QtWidgets.QHeaderView.Stretch)
 
     @property
     def employee(self):
@@ -175,6 +340,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # @staticmethod
     def ok(self):
+        print(self.data)
         self.session.commit()
         self.session.close()
         self.exit()
