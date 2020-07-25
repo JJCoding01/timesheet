@@ -182,7 +182,7 @@ class Entry(Base):
     day7 = Column("Day7", Float)
 
     employee = relationship("Employee", backref=backref(f"Entries"), uselist=False)
-    project = relationship("Project", backref=backref(f"Entries", uselist=False))
+    project = relationship("Project", backref=backref(f"Entries", uselist=True))
 
     def __init__(self, ending_date, note, employee, project, days):
         self.ending_date = ending_date
