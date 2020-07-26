@@ -173,13 +173,13 @@ class Entry(Base):
     # add a column for each day of the week, keep these general, so the
     # first/last day can be customized at the front end. These will store the
     # hours related to the project
-    day1 = Column("Day1", Float)
-    day2 = Column("Day2", Float)
-    day3 = Column("Day3", Float)
-    day4 = Column("Day4", Float)
-    day5 = Column("Day5", Float)
-    day6 = Column("Day6", Float)
-    day7 = Column("Day7", Float)
+    day1 = Column("Day1", Float, nullable=True)
+    day2 = Column("Day2", Float, nullable=True)
+    day3 = Column("Day3", Float, nullable=True)
+    day4 = Column("Day4", Float, nullable=True)
+    day5 = Column("Day5", Float, nullable=True)
+    day6 = Column("Day6", Float, nullable=True)
+    day7 = Column("Day7", Float, nullable=True)
 
     employee = relationship("Employee", backref=backref(f"Entries"), uselist=False)
     project = relationship("Project", backref=backref(f"Entries", uselist=True))
