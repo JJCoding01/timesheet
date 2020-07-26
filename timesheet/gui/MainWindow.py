@@ -19,12 +19,17 @@ UIFilename = Path(__file__).parent / "MainWindow.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(UIFilename)
 
 
-def showDialog(message="", title="Sample title", icon=QMessageBox.Information):
+def showDialog(
+    message="", title="Sample title", icon=QMessageBox.Information, buttons="okcancel"
+):
     msgBox = QMessageBox()
     msgBox.setIcon(icon)
     msgBox.setText(message)
     msgBox.setWindowTitle(title)
-    msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    if buttons == "okcancel":
+        msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    if buttons == "yesno":
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
     return msgBox.exec()
 
