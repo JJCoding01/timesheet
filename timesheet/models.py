@@ -208,7 +208,15 @@ class Entry(Base):
         except AttributeError:
             # self._days does not exist yet. This happens when the Entry object
             # was created from a query and the __init__ method is not ran
-            self._days = [self.day1, self.day2, self.day3, self.day4, self.day5, self.day6, self.day7]
+            self._days = [
+                self.day1,
+                self.day2,
+                self.day3,
+                self.day4,
+                self.day5,
+                self.day6,
+                self.day7,
+            ]
         return self._days
 
     @days.setter

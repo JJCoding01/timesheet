@@ -6,4 +6,3 @@ EMAIL_DOMAIN = "@example.com"
 
 engine = create_engine(DATABASE_URI, echo=False)
 Session = sessionmaker(bind=engine)
-

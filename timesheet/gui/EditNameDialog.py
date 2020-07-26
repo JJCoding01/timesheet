@@ -54,74 +54,73 @@ class EditNameDialog(QtWidgets.QDialog, Ui_MainWindow):
     @property
     def first_name(self):
         text = self.first_name_field.text()
-        if text == '':
+        if text == "":
             return None
         return text
 
     @first_name.setter
     def first_name(self, name):
-        name = name if name is not None else ''
+        name = name if name is not None else ""
         self.first_name_field.setText(name)
 
     @property
     def last_name(self):
         text = self.last_name_field.text()
-        if text == '':
+        if text == "":
             return None
         return text
 
     @last_name.setter
     def last_name(self, name):
-        name = name if name is not None else ''
+        name = name if name is not None else ""
         self.last_name_field.setText(name)
 
     @property
     def nickname(self):
         text = self.nickname_field.text()
-        if text == '':
+        if text == "":
             return None
         return text
 
     @nickname.setter
     def nickname(self, name):
-        name = name if name is not None else ''
+        name = name if name is not None else ""
         self.nickname_field.setText(name)
-
 
     @property
     def initials(self):
         text = self.initials_field.text()
-        if text == '':
+        if text == "":
             return None
         return text
 
     @initials.setter
     def initials(self, name):
-        name = name if name is not None else ''
+        name = name if name is not None else ""
         self.initials_field.setText(name)
 
     @property
     def username(self):
         text = self.username_field.text()
-        if text == '':
+        if text == "":
             return None
         return text
 
     @username.setter
     def username(self, name):
-        name = name if name is not None else ''
+        name = name if name is not None else ""
         self.username_field.setText(name)
 
     @property
     def email(self):
         text = self.email_field.text()
-        if text == '':
+        if text == "":
             return None
         return text
 
     @email.setter
     def email(self, address):
-        address = address if address is not None else ''
+        address = address if address is not None else ""
         self.email_field.setText(address)
 
     @property
@@ -131,7 +130,6 @@ class EditNameDialog(QtWidgets.QDialog, Ui_MainWindow):
     @active.setter
     def active(self, bool):
         self.active_field.setChecked(bool)
-
 
     def ok(self):
         self.employee.first_name = self.first_name
