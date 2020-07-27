@@ -315,6 +315,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return self.__employee
 
     @property
+    def entries(self):
+        _entries = (
+            self.session.query(db.Entry)
+            .filter_by(
+                ending_date=self.get_date(), employee_id=self.employee.employee_id,
+            )
+            .order_by(db.Entry.entry_id)
+        )
+        return _entries.all()
     def roles(self):
         if self.__roles is None:
             self.__roles = self.session.query(db.Role).all()
