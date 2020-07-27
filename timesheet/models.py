@@ -184,7 +184,7 @@ class Entry(Base):
     employee = relationship("Employee", backref=backref(f"Entries"), uselist=False)
     project = relationship("Project", backref=backref(f"Entries", uselist=True))
 
-    def __init__(self, ending_date, note, employee, project, days):
+    def __init__(self, ending_date, employee, note=None, project=None, days=None):
         self.ending_date = ending_date
         self.note = note
         self.employee = employee
