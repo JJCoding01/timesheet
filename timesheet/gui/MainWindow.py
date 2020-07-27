@@ -13,6 +13,7 @@ from sqlalchemy import and_
 
 from timesheet.gui.EditNameDialog import EditNameDialog
 from timesheet import models as db
+from timesheet.entry import DisplayEntry
 from timesheet.conf import Session
 
 UIFilename = Path(__file__).parent / "MainWindow.ui"
@@ -32,6 +33,109 @@ def showDialog(
         msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
     return msgBox.exec()
+
+
+class EntryModel(QtCore.QAbstractTableModel):
+    def __init__(self, data, session=None):
+        super(EntryModel, self).__init__()
+        self._data = data
+        self.session = session
+
+    def flags(self, index):
+        return Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable
+
+    def headerData(self, section, orientation, role):
+        # section is the index of the column/row.
+        headers = [
+            "Project number",
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Total",
+            "Notes",
+        ]
+        if role == Qt.DisplayRole:
+            if orientation == Qt.Horizontal:
+                return str(headers[section])
+
+    def rowCount(self, parent=None, *args, **kwargs):
+        return len(self._data.rows)
+
+    def columnCount(self, parent=None, *args, **kwargs):
+        return 10
+
+    def data(self, index, role=None):
+        if index.column() == 0:  # project numbers
+            project = self._data.projects[index.row()]
+            if project is None:
+                if role == Qt.DisplayRole:
+                    return ""
+                return
+            if role == Qt.DisplayRole:
+                return project.number
+            if role == Qt.ToolTipRole:
+                return project.description
+        if index.column() in (1, 2, 3, 4, 5, 6, 7):
+            entry = self._data.entries[index.row()]
+            if role == Qt.DisplayRole:
+                return f"{entry.days[index.column() - 1]}"
+        if index.column() == 8:
+            if role == Qt.DisplayRole:
+                return "project total"
+
+        if index.column() == 9:
+            if role == Qt.DisplayRole:
+                return self._data.notes[index.row()]
+
+    def setData(self, index, value, role=Qt.EditRole):
+        if role == Qt.EditRole:
+            entry = self._data.entries[index.row()]
+            if index.column() == 0:  # project number column
+                if value == "":
+                    # when entered project number is a empty string, don't
+                    # bother searching database for it or prompting user with
+                    # an invalid project number dialog. Just clear it and set
+                    # it to None.
+                    entry.project = None
+                    return True
+                # note that there cannot be multiple projects with the same
+                # project number, so it is safe to grab the first one found
+                new_project = (
+                    self.session.query(db.Project).filter_by(number=value).first()
+                )
+                if new_project is not None:
+                    # a valid project was found, update the current entry
+                    entry.project = new_project
+                    return True
+                else:  # new project is None
+                    # the project could not be found, determine how to proceed
+                    clear = showDialog(
+                        message=f"project number {value} is invalid\n"
+                        f"Do you want to clear the project?",
+                        title="Invalid Project Number",
+                        icon=QMessageBox.Question,
+                        buttons="yesno",
+                    )
+                    if clear == QMessageBox.Yes:
+                        # 'clear' the project, by setting it to None
+                        entry.project = None
+                    # else: do nothing, keep original project number
+                return True
+            if 1 <= index.column() <= 8:
+                hours = self._data.hours[index.row()]
+                if value == "":
+                    hours[index.column() - 1] = None
+                else:
+                    hours[index.column() - 1] = float(value)
+                entry.days = hours
+            if index.column() == 9:  # description/notes column
+                entry.note = value
+                return True
+        return True
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -190,20 +294,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.employee_id.setText("2")
 
-        self.populate_table()
-
-        # ------------------
-        self.data = [
-            [111456, 3.25, 1, 2, 6, 2, 3, 4, 23, "some description"],
-            [222456, 2, 4, 2, 3, 2, 3, 4, 27, "row 2 description"],
-            [333456, 4, 4, 3, 5, 2, 3, 4, 27, "row 2 description"],
-            [444456, 8, 4, 4, 6, 2, 3, 4, 27, "row 2 description"],
-            ["", 6, 8, 10, 12, 4, 6, 8, 27, ""],  # totals row
-        ]
-        self.model = TableModel(self.data)
+        self.data = DisplayEntry(self.entries)
+        self.model = EntryModel(self.data, self.session)
         self.tableView.setModel(self.model)
-        header = self.tableView.horizontalHeader()
 
+        header = self.tableView.horizontalHeader()
         for x in range(8):
             header.setSectionResizeMode(x, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(9, QtWidgets.QHeaderView.Stretch)
@@ -329,28 +424,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             print(e)
 
-    def populate_table(self):
-        # timesheets = (
-        #     self.session.query(db.Timesheet)
-        #     .filter(db.Timesheet.employee_id == self.employee.employee_id)
-        #     .filter(db.Timesheet.ending_date == self.get_date())
-        # )
-        #
-        # self.tableWidget.setRowCount(0)
-        # for r, timesheet in enumerate(timesheets):
-        #     self.tableWidget.insertRow(r)
-        #     for c, column in enumerate(timesheet.get_row):
-        #         self.tableWidget.setItem(r, c, QtWidgets.QTableWidgetItem(str(column)))
-        pass
-
-    # @staticmethod
     def ok(self):
-        print(self.data)
+        # print(self.data)
         self.session.commit()
         self.session.close()
         self.exit()
 
-    # @staticmethod
     def exit(self):
         self.session.rollback()
         self.session.close()
