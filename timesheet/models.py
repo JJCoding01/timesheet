@@ -223,6 +223,7 @@ class Entry(Base):
     def days(self, values):
         if len(values) != 7:
             raise ValueError(f"Length of days must be 7, not {len(values)}")
+        self.day1, self.day2, self.day3, self.day4, self.day5, self.day6, self.day7 = values
         self._days = values
 
     @property
